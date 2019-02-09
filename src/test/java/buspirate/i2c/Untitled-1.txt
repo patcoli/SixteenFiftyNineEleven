@@ -1,0 +1,20 @@
+private static BusPirateI2C busPirateI2C = null;
+
+public static void init() throws I2CModeNotSupported, BusPirateCommPortClosedException, I2CModeProtocolException {
+    try {
+        busPirateI2C = new BusPirateI2C();
+    } catch(NoBusPirateFoundException e) {
+        System.out.println("No bus pirate found. Integration tests will be skipped.");
+    }
+}
+
+
+public void wireUpBusPirate() {
+        //i2cMock = mock(I2C.class);
+        i2cMock = mock(I2C.class);
+        // Shunt all I2C reads through the BP
+        when(IntegrationTestMock.WPILIB_I2C_READ(i2cMock))
+        .thenAnswer(IntegrationTestMock.BUS_PIRATE_READ());
+        // Shunt all I2C writes through the BP
+        when(IntegrationTestMock.WPILIB_I2C_WRITE(i2cMock))
+        .thenAnswer(IntegrationTestMock.BUS_PIRATE_WRITE());
